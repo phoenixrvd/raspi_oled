@@ -60,13 +60,16 @@ class Monitor:
 
     def render(self) -> None:
         with canvas(self._device) as draw:
-            text_lines = [
-                f"{time()}  {ip()}",
+            draw.font = self._font
+            draw.fill = "white"
+
+            draw.text((0, 0), f"{time()}  {ip()}")
+            draw.text((0, 20), "\n".join([
                 f"Disk free : {disk_usage()}",
                 f"Load avg. : {load_avg()}",
                 f"Temp.     : {temperature()}",
-            ]
-            draw.text((0, 0), "\n".join(text_lines), font=self._font, fill="white")
+            ]))
+
 
     def watch(self, interval=10) -> None:
         while True:
