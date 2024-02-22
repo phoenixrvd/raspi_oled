@@ -58,18 +58,17 @@ class Monitor:
         if not emulator:
             self._device = sh1106(serial_interface=i2c(port=1, address=0x3c))
 
+    def draw_text(self, draw, xy, text) -> None:
+        draw.text(xy, text, font=self._font, fill="white")
+
     def render(self) -> None:
         with canvas(self._device) as draw:
-            draw.font = self._font
-            draw.fill = "white"
-
-            draw.text((0, 0), f"{time()}  {ip()}")
-            draw.text((0, 20), "\n".join([
+            self.draw_text(draw, (0, 0), f"{time()}  {ip()}")
+            self.draw_text(draw, (0, 20), "\n".join([
                 f"Disk free : {disk_usage()}",
                 f"Load avg. : {load_avg()}",
                 f"Temp.     : {temperature()}",
             ]))
-
 
     def watch(self, interval=10) -> None:
         while True:
