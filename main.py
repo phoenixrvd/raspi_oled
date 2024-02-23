@@ -13,6 +13,7 @@ def main() -> None:
     parser.add_argument('--interval', type=float, default=10, help='Interval in seconds between updates on watch mode')
     parser.add_argument('--install', action='store_true', help='Install the program as a service')
     parser.add_argument('--uninstall', action='store_true', help='Uninstall the program as a service')
+    parser.add_argument('--device', type=str, default='ssd1306', help='The device driver to use')
     args = parser.parse_args()
 
     service_name = 'display-sh1106'
@@ -24,12 +25,14 @@ def main() -> None:
             execution_args.append(f'--interval {args.interval}')
         if args.emulate:
             execution_args.append('--emulate')
+        if args.device:
+            execution_args.append(f'--device {args.device}')
 
         SystemdService(name=service_name).install(' '.join(execution_args))
     elif args.uninstall:
         SystemdService(name=service_name).uninstall()
     elif args.watch:
-        Monitor(emulator=args.emulate).watch(args.interval)
+        Monitor(emulator=args.emulate, device=args.device).watch(args.interval)
     else:
         parser.print_help()
 

@@ -2,6 +2,7 @@ import os
 import shutil
 import socket
 import psutil
+import importlib
 
 from datetime import datetime
 from time import sleep
@@ -9,7 +10,6 @@ from PIL import ImageFont
 from luma.core.interface.serial import i2c
 from luma.core.render import canvas
 from luma.emulator.device import capture
-from luma.oled.device import sh1106
 
 
 def ip() -> str:
@@ -51,12 +51,14 @@ def temperature() -> str:
 
 
 class Monitor:
-    def __init__(self, emulator=False):
+    def __init__(self, emulator=False, device='ssd1306'):
         self._font = ImageFont.truetype('DejaVuSansMono.ttf', 10)
         self._device = capture(scale=1, file_template='preview.png')
 
         if not emulator:
-            self._device = sh1106(serial_interface=i2c(port=1, address=0x3c))
+            module = importlib.import_module('luma.oled.device')
+            device_cls = getattr(module, device)
+            self._device = device_cls(serial_interface=i2c(port=1, address=0x3c))
 
     def draw_text(self, draw, xy, text) -> None:
         draw.text(xy, text, font=self._font, fill="white")
