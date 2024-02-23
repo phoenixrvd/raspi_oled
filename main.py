@@ -16,7 +16,7 @@ def main() -> None:
     parser.add_argument('--device', type=str, default='ssd1306', help='The device driver to use')
     args = parser.parse_args()
 
-    service_name = 'display-sh1106'
+    service_name = 'i2c-display'
 
     if args.install:
         execution_args = ['main.py --watch']
